@@ -1,5 +1,6 @@
 import datetime
 import os
+import random
 
 import telegram
 import requests
@@ -85,5 +86,8 @@ if __name__ == '__main__':
     #     )
     #     save_image(dir_name, epic_image)
     bot = telegram.Bot(token=tg_api_key)
-    # print(bot.getMe())
-    bot.send_message(chat_id=chat_id, text='Hi to all subscribers!')
+    # # print(bot.getMe())
+    # bot.send_message(chat_id=chat_id, text='Hi to all subscribers!')
+    image_name_to_send = random.choice(os.listdir(dir_name))
+    with open(f'{dir_name}/{image_name_to_send}', 'rb') as image_to_send:
+        bot.send_photo(chat_id=chat_id, photo=image_to_send)
