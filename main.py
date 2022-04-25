@@ -1,6 +1,7 @@
 import datetime
 import os
 
+import telegram
 import requests
 from urllib import parse
 from dotenv import load_dotenv
@@ -57,6 +58,8 @@ if __name__ == '__main__':
     nasa_url = 'https://api.nasa.gov/planetary/apod'
     epic_url = 'https://api.nasa.gov/EPIC'
     nasa_api_key = os.getenv('NASA_API')
+    tg_api_key = os.getenv('TG_API')
+    chat_id = '@apodvsepic'
     amount_of_apods = 30
     amount_of_epics = 5
     dir_name = 'images'
@@ -64,20 +67,23 @@ if __name__ == '__main__':
         os.makedirs(dir_name)
     except FileExistsError:
         pass
-    spacex_images = get_spacex_images(spacex_url)
-    for image in spacex_images:
-        save_image(dir_name, image)
-    apod_images = get_apod_images(
-        nasa_api_key,
-        nasa_url,
-        amount_of_apods,
-    )
-    for image in apod_images:
-        save_image(dir_name, image)
-    for count in range(amount_of_epics):
-        epic_image = get_epic_images(
-            nasa_api_key,
-            epic_url,
-            count,
-        )
-        save_image(dir_name, epic_image)
+    # spacex_images = get_spacex_images(spacex_url)
+    # for image in spacex_images:
+    #     save_image(dir_name, image)
+    # apod_images = get_apod_images(
+    #     nasa_api_key,
+    #     nasa_url,
+    #     amount_of_apods,
+    # )
+    # for image in apod_images:
+    #     save_image(dir_name, image)
+    # for count in range(amount_of_epics):
+    #     epic_image = get_epic_images(
+    #         nasa_api_key,
+    #         epic_url,
+    #         count,
+    #     )
+    #     save_image(dir_name, epic_image)
+    bot = telegram.Bot(token=tg_api_key)
+    # print(bot.getMe())
+    bot.send_message(chat_id=chat_id, text='Hi to all subscribers!')
