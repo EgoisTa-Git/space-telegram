@@ -1,4 +1,5 @@
 import os
+import random
 import time
 
 import telegram
@@ -29,7 +30,7 @@ if __name__ == '__main__':
     tg_chat_id = os.getenv('TG_CHAT_ID')
     post_delay = os.getenv('POST_DELAY_IN_SECONDS')
     amount_of_apods = 5
-    amount_of_epics = 2
+    amount_of_epics = 1
     dir_name = 'images'
     try:
         os.makedirs(dir_name)
@@ -47,9 +48,10 @@ if __name__ == '__main__':
         dir_name,
         get_epic_images(nasa_api_key, epic_url, amount_of_epics),
     )
+    shuffled_images = os.listdir(dir_name)
+    random.shuffle(shuffled_images)
     bot = telegram.Bot(token=tg_api_key)
-    bot.send_message(chat_id=tg_chat_id, text='Hi to all subscribers!')
-    images_to_send = (file for file in os.listdir(dir_name))
+    images_to_send = (file for file in shuffled_images)
     while True:
         try:
             image_name_to_send = next(images_to_send)
@@ -58,5 +60,8 @@ if __name__ == '__main__':
                 bot.send_photo(chat_id=tg_chat_id, photo=image_to_send)
             time.sleep(float(post_delay))
         except StopIteration:
-            print('Больше новый файлов нет')
+            bot.send_message(
+                chat_id=tg_chat_id,
+                text='Новые посты в ближайшем будущем!',
+            )
             break
