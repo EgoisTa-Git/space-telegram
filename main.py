@@ -1,55 +1,21 @@
-import datetime
 import os
-import random
+import time
 
 import telegram
 import requests
 from urllib import parse
 from dotenv import load_dotenv
 
-
-def save_image(image_dir, image_url):
-    url_parse = parse.urlparse(image_url)
-    image_name = os.path.basename(url_parse.path)
-    with open(f'{image_dir}/{image_name}', 'wb') as file:
-        file.write(requests.get(image_url).content)
+from fetch_spacex import get_spacex_images
+from fetch_nasa import get_apod_images, get_epic_images
 
 
-def get_spacex_images(target_url):
-    response = requests.get(target_url)
-    response.raise_for_status()
-    return response.json()['links']['flickr']['original']
-
-
-def get_apod_images(api_key, url, amount):
-    payload = {
-        'api_key': api_key,
-        'count': amount,
-    }
-    response = requests.get(url, params=payload)
-    response.raise_for_status()
-    apods = response.json()
-    apod_images = []
-    for apod in apods:
-        if apod['media_type'] == 'image':
-            apod_images.append(apod['url'])
-    return apod_images
-
-
-def get_epic_images(api_key, url, amount):
-    path_to_api = '/api/natural'
-    payload = {
-        'api_key': api_key,
-    }
-    data_response = requests.get(url+path_to_api, params=payload)
-    data_response.raise_for_status()
-    date = data_response.json()[amount]['date']
-    date = datetime.datetime.fromisoformat(date).strftime('/%Y/%m/%d')
-    image_name = data_response.json()[amount]['image']
-    path_to_archive = '/archive/natural' + date + '/png/' + image_name + '.png'
-    response = requests.get(url+path_to_archive, params=payload)
-    response.raise_for_status()
-    return response.url
+def save_images(image_dir=, images):
+    for image_url in images:
+        url_parse = parse.urlparse(image_url)
+        image_name = os.path.basename(url_parse.path)
+        with open(f'{image_dir}/{image_name}', 'wb') as file:
+            file.write(requests.get(image_url).content)
 
 
 if __name__ == '__main__':
@@ -60,34 +26,37 @@ if __name__ == '__main__':
     epic_url = 'https://api.nasa.gov/EPIC'
     nasa_api_key = os.getenv('NASA_API')
     tg_api_key = os.getenv('TG_API')
-    chat_id = '@apodvsepic'
-    amount_of_apods = 30
-    amount_of_epics = 5
+    tg_chat_id = os.getenv('TG_CHAT_ID')
+    post_delay = os.getenv('POST_DELAY_IN_SECONDS')
+    amount_of_apods = 5
+    amount_of_epics = 2
     dir_name = 'images'
     try:
         os.makedirs(dir_name)
     except FileExistsError:
         pass
-    # spacex_images = get_spacex_images(spacex_url)
-    # for image in spacex_images:
-    #     save_image(dir_name, image)
-    # apod_images = get_apod_images(
-    #     nasa_api_key,
-    #     nasa_url,
-    #     amount_of_apods,
-    # )
-    # for image in apod_images:
-    #     save_image(dir_name, image)
-    # for count in range(amount_of_epics):
-    #     epic_image = get_epic_images(
-    #         nasa_api_key,
-    #         epic_url,
-    #         count,
-    #     )
-    #     save_image(dir_name, epic_image)
-    bot = telegram.Bot(token=tg_api_key)
-    # # print(bot.getMe())
-    # bot.send_message(chat_id=chat_id, text='Hi to all subscribers!')
-    image_name_to_send = random.choice(os.listdir(dir_name))
-    with open(f'{dir_name}/{image_name_to_send}', 'rb') as image_to_send:
-        bot.send_photo(chat_id=chat_id, photo=image_to_send)
+    save_images(
+        dir_name,
+        get_spacex_images(spacex_url),
+    )
+    save_images(
+        dir_name,
+        get_apod_images(nasa_api_key, nasa_url, amount_of_apods),
+    )
+    save_images(
+        dir_name,
+        get_epic_images(nasa_api_key, epic_url, amount_of_epics),
+    )
+    # bot = telegram.Bot(token=tg_api_key)
+    # bot.send_message(chat_id=tg_chat_id, text='Hi to all subscribers!')
+    # images_to_send = (file for file in os.listdir(dir_name))
+    # while True:
+    #     try:
+    #         image_name_to_send = next(images_to_send)
+    #         with open(f'{dir_name}/{image_name_to_send}',
+    #                   'rb') as image_to_send:
+    #             bot.send_photo(chat_id=chat_id, photo=image_to_send)
+    #         time.sleep(float(post_delay))
+    #     except StopIteration:
+    #         print('Больше новый файлов нет')
+    #         break
