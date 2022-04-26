@@ -10,7 +10,7 @@ from fetch_spacex import get_spacex_images
 from fetch_nasa import get_apod_images, get_epic_images
 
 
-def save_images(image_dir=, images):
+def save_images(image_dir, images):
     for image_url in images:
         url_parse = parse.urlparse(image_url)
         image_name = os.path.basename(url_parse.path)
@@ -47,16 +47,16 @@ if __name__ == '__main__':
         dir_name,
         get_epic_images(nasa_api_key, epic_url, amount_of_epics),
     )
-    # bot = telegram.Bot(token=tg_api_key)
-    # bot.send_message(chat_id=tg_chat_id, text='Hi to all subscribers!')
-    # images_to_send = (file for file in os.listdir(dir_name))
-    # while True:
-    #     try:
-    #         image_name_to_send = next(images_to_send)
-    #         with open(f'{dir_name}/{image_name_to_send}',
-    #                   'rb') as image_to_send:
-    #             bot.send_photo(chat_id=chat_id, photo=image_to_send)
-    #         time.sleep(float(post_delay))
-    #     except StopIteration:
-    #         print('Больше новый файлов нет')
-    #         break
+    bot = telegram.Bot(token=tg_api_key)
+    bot.send_message(chat_id=tg_chat_id, text='Hi to all subscribers!')
+    images_to_send = (file for file in os.listdir(dir_name))
+    while True:
+        try:
+            image_name_to_send = next(images_to_send)
+            with open(f'{dir_name}/{image_name_to_send}',
+                      'rb') as image_to_send:
+                bot.send_photo(chat_id=tg_chat_id, photo=image_to_send)
+            time.sleep(float(post_delay))
+        except StopIteration:
+            print('Больше новый файлов нет')
+            break
