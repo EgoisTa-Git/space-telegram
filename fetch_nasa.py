@@ -1,14 +1,18 @@
 import datetime
+import os
 
 import requests
+from dotenv import load_dotenv
 
 nasa_url = 'https://api.nasa.gov/planetary/apod'
 epic_url = 'https://api.nasa.gov/EPIC'
 
 
-def get_apod_images(api_key, url=nasa_url, amount=1):
+def get_apod_images(url=nasa_url, amount=1):
+    load_dotenv()
+    nasa_api_key = os.getenv('NASA_API')
     payload = {
-        'api_key': api_key,
+        'api_key': nasa_api_key,
         'count': amount,
     }
     response = requests.get(url, params=payload)
@@ -21,11 +25,13 @@ def get_apod_images(api_key, url=nasa_url, amount=1):
     return apod_images
 
 
-def get_epic_images(api_key, url=epic_url, amount=1):
+def get_epic_images(url=epic_url, amount=1):
+    load_dotenv()
+    nasa_api_key = os.getenv('NASA_API')
     epic_images = []
     path_to_api = '/api/natural'
     payload = {
-        'api_key': api_key,
+        'api_key': nasa_api_key,
     }
     data_response = requests.get(f'{url}{path_to_api}', params=payload)
     data_response.raise_for_status()

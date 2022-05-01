@@ -24,7 +24,6 @@ def save_images(image_dir, images):
 
 if __name__ == '__main__':
     load_dotenv()
-    nasa_api_key = os.getenv('NASA_API')
     tg_api_key = os.getenv('TG_API')
     tg_chat_id = os.getenv('TG_CHAT_ID')
     post_delay = float(os.getenv('POST_DELAY_IN_SECONDS'))
@@ -37,11 +36,11 @@ if __name__ == '__main__':
     )
     save_images(
         DIR_NAME,
-        get_apod_images(nasa_api_key, nasa_url, amount_of_apods),
+        get_apod_images(nasa_url, amount_of_apods),
     )
     save_images(
         DIR_NAME,
-        get_epic_images(nasa_api_key, epic_url, amount_of_epics),
+        get_epic_images(epic_url, amount_of_epics),
     )
     shuffled_images = os.listdir(DIR_NAME)
     random.shuffle(shuffled_images)
