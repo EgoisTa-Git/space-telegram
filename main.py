@@ -8,8 +8,8 @@ import requests
 from urllib import parse
 from dotenv import load_dotenv
 
-from fetch_spacex import get_spacex_images
-from fetch_nasa import get_apod_images, get_epic_images
+from fetch_spacex import get_spacex_images, spacex_url
+from fetch_nasa import get_apod_images, get_epic_images, nasa_url, epic_url
 
 DIR_NAME = 'images'
 
@@ -24,10 +24,6 @@ def save_images(image_dir, images):
 
 if __name__ == '__main__':
     load_dotenv()
-    spacex_url = 'https://api.spacexdata.com/v5/launches' \
-                 '/5eb87d42ffd86e000604b384'
-    nasa_url = 'https://api.nasa.gov/planetary/apod'
-    epic_url = 'https://api.nasa.gov/EPIC'
     nasa_api_key = os.getenv('NASA_API')
     tg_api_key = os.getenv('TG_API')
     tg_chat_id = os.getenv('TG_CHAT_ID')

@@ -2,8 +2,11 @@ import datetime
 
 import requests
 
+nasa_url = 'https://api.nasa.gov/planetary/apod'
+epic_url = 'https://api.nasa.gov/EPIC'
 
-def get_apod_images(api_key, url, amount):
+
+def get_apod_images(api_key, url=nasa_url, amount=1):
     payload = {
         'api_key': api_key,
         'count': amount,
@@ -18,7 +21,7 @@ def get_apod_images(api_key, url, amount):
     return apod_images
 
 
-def get_epic_images(api_key, url, amount):
+def get_epic_images(api_key, url=epic_url, amount=1):
     epic_images = []
     path_to_api = '/api/natural'
     payload = {
