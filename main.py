@@ -11,6 +11,8 @@ from dotenv import load_dotenv
 from fetch_spacex import get_spacex_images
 from fetch_nasa import get_apod_images, get_epic_images
 
+DIR_NAME = 'images'
+
 
 def save_images(image_dir, images):
     for image_url in images:
@@ -32,25 +34,23 @@ if __name__ == '__main__':
     post_delay = float(os.getenv('POST_DELAY_IN_SECONDS'))
     amount_of_apods = 5
     amount_of_epics = 1
-    dir_name = 'images'
-    Path(f'{dir_name}').mkdir(parents=True, exist_ok=True)
+    Path(f'{DIR_NAME}').mkdir(parents=True, exist_ok=True)
     save_images(
-        dir_name,
+        DIR_NAME,
         get_spacex_images(spacex_url),
     )
     save_images(
-        dir_name,
+        DIR_NAME,
         get_apod_images(nasa_api_key, nasa_url, amount_of_apods),
     )
     save_images(
-        dir_name,
+        DIR_NAME,
         get_epic_images(nasa_api_key, epic_url, amount_of_epics),
     )
-    shuffled_images = os.listdir(dir_name)
+    shuffled_images = os.listdir(DIR_NAME)
     random.shuffle(shuffled_images)
     bot = telegram.Bot(token=tg_api_key)
     for image in shuffled_images:
-        image_name_to_send = next(images_to_send)
-        with open(f'{dir_name}/{image_name_to_send}', 'rb') as image_to_send:
+        with open(f'{DIR_NAME}/{image}', 'rb') as image_to_send:
             bot.send_photo(chat_id=tg_chat_id, photo=image_to_send)
         time.sleep(post_delay)
