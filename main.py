@@ -1,6 +1,7 @@
 import os
 import random
 import time
+from pathlib import Path
 
 import telegram
 import requests
@@ -32,10 +33,7 @@ if __name__ == '__main__':
     amount_of_apods = 5
     amount_of_epics = 1
     dir_name = 'images'
-    try:
-        os.makedirs(dir_name)
-    except FileExistsError:
-        pass
+    Path(f'{dir_name}').mkdir(parents=True, exist_ok=True)
     save_images(
         dir_name,
         get_spacex_images(spacex_url),
