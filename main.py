@@ -28,7 +28,7 @@ if __name__ == '__main__':
     nasa_api_key = os.getenv('NASA_API')
     tg_api_key = os.getenv('TG_API')
     tg_chat_id = os.getenv('TG_CHAT_ID')
-    post_delay = os.getenv('POST_DELAY_IN_SECONDS')
+    post_delay = float(os.getenv('POST_DELAY_IN_SECONDS'))
     amount_of_apods = 5
     amount_of_epics = 1
     dir_name = 'images'
@@ -51,17 +51,8 @@ if __name__ == '__main__':
     shuffled_images = os.listdir(dir_name)
     random.shuffle(shuffled_images)
     bot = telegram.Bot(token=tg_api_key)
-    images_to_send = (file for file in shuffled_images)
-    while True:
-        try:
-            image_name_to_send = next(images_to_send)
-            with open(f'{dir_name}/{image_name_to_send}',
-                      'rb') as image_to_send:
-                bot.send_photo(chat_id=tg_chat_id, photo=image_to_send)
-            time.sleep(float(post_delay))
-        except StopIteration:
-            bot.send_message(
-                chat_id=tg_chat_id,
-                text='Новые посты в ближайшем будущем!',
-            )
-            break
+    for image in shuffled_images:
+        image_name_to_send = next(images_to_send)
+        with open(f'{dir_name}/{image_name_to_send}', 'rb') as image_to_send:
+            bot.send_photo(chat_id=tg_chat_id, photo=image_to_send)
+        time.sleep(post_delay)

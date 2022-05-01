@@ -24,14 +24,14 @@ def get_epic_images(api_key, url, amount):
     payload = {
         'api_key': api_key,
     }
+    data_response = requests.get(f'{url}{path_to_api}', params=payload)
+    data_response.raise_for_status()
     for number in range(amount):
-        data_response = requests.get(url+path_to_api, params=payload)
-        data_response.raise_for_status()
         date = data_response.json()[number]['date']
         date = datetime.datetime.fromisoformat(date).strftime('%Y/%m/%d')
         image_name = data_response.json()[number]['image']
         path_to_archive = f'/archive/natural/{date}/png/{image_name}.png'
-        response = requests.get(url+path_to_archive, params=payload)
+        response = requests.get(f'{url}{path_to_archive}', params=payload)
         response.raise_for_status()
         epic_images.append(response.url)
     return epic_images
