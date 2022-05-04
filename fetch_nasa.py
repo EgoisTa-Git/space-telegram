@@ -4,18 +4,19 @@ import os
 import requests
 from dotenv import load_dotenv
 
-nasa_url = 'https://api.nasa.gov/planetary/apod'
-epic_url = 'https://api.nasa.gov/EPIC'
+from save_files import save_images
+
+NASA_URL = 'https://api.nasa.gov/planetary/apod'
+EPIC_URL = 'https://api.nasa.gov/EPIC'
 
 
-def get_apod_images(url=nasa_url, amount=1):
-    load_dotenv()
+def get_apod_images(amount=1):
     nasa_api_key = os.getenv('NASA_API')
     payload = {
         'api_key': nasa_api_key,
         'count': amount,
     }
-    response = requests.get(url, params=payload)
+    response = requests.get(NASA_URL, params=payload)
     response.raise_for_status()
     apods = response.json()
     apod_images = []
@@ -25,22 +26,29 @@ def get_apod_images(url=nasa_url, amount=1):
     return apod_images
 
 
-def get_epic_images(url=epic_url, amount=1):
-    load_dotenv()
+def get_epic_images(amount=1):
     nasa_api_key = os.getenv('NASA_API')
     epic_images = []
     path_to_api = '/api/natural'
     payload = {
         'api_key': nasa_api_key,
     }
-    data_response = requests.get(f'{url}{path_to_api}', params=payload)
+    data_response = requests.get(f'{EPIC_URL}{path_to_api}', params=payload)
     data_response.raise_for_status()
     for number in range(amount):
         date = data_response.json()[number]['date']
         date = datetime.datetime.fromisoformat(date).strftime('%Y/%m/%d')
         image_name = data_response.json()[number]['image']
         path_to_archive = f'/archive/natural/{date}/png/{image_name}.png'
-        response = requests.get(f'{url}{path_to_archive}', params=payload)
+        response = requests.get(f'{EPIC_URL}{path_to_archive}', params=payload)
         response.raise_for_status()
         epic_images.append(response.url)
     return epic_images
+
+
+if __name__ == '__main__':
+    load_dotenv()
+    amount_of_apods = 5
+    amount_of_epics = 1
+    save_images(get_apod_images(amount_of_apods))
+    save_images(get_epic_images(amount_of_epics))

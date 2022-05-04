@@ -37,7 +37,9 @@ pip install -r requirements.txt
 
 ## Запуск
 
-- Для запуска бота `python3 main.py` 
+- Для сбора новых фотографий SpaceX `python3 fetch_spacex.py`
+- Для сбора новых фотографий NASA `python3 fetch_nasa.py`
+- Для запуска бота `python3 main.py`
 
 ***
 Код написан в образовательных целях на курсах для веб-разработчиков [dvmn.org](https://dvmn.org/).
