@@ -10,10 +10,9 @@ NASA_URL = 'https://api.nasa.gov/planetary/apod'
 EPIC_URL = 'https://api.nasa.gov/EPIC'
 
 
-def get_apod_images(amount=1):
-    nasa_api_key = os.getenv('NASA_API')
+def get_apod_images(api_key, amount=1):
     payload = {
-        'api_key': nasa_api_key,
+        'api_key': api_key,
         'count': amount,
     }
     response = requests.get(NASA_URL, params=payload)
@@ -26,12 +25,11 @@ def get_apod_images(amount=1):
     return apod_images
 
 
-def get_epic_images(amount=1):
-    nasa_api_key = os.getenv('NASA_API')
+def get_epic_images(api_key, amount=1):
     epic_images = []
     path_to_api = '/api/natural'
     payload = {
-        'api_key': nasa_api_key,
+        'api_key': api_key,
     }
     data_response = requests.get(f'{EPIC_URL}{path_to_api}', params=payload)
     data_response.raise_for_status()
@@ -48,7 +46,8 @@ def get_epic_images(amount=1):
 
 if __name__ == '__main__':
     load_dotenv()
+    nasa_api_key = os.getenv('NASA_API')
     amount_of_apods = 5
     amount_of_epics = 1
-    save_images(get_apod_images(amount_of_apods))
-    save_images(get_epic_images(amount_of_epics))
+    save_images(get_apod_images(nasa_api_key, amount_of_apods))
+    save_images(get_epic_images(nasa_api_key, amount_of_epics))
