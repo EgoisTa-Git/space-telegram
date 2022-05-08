@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 import requests
-from urllib.parse import urlparse
+from urllib.parse import urlparse, unquote
 
 DIR_NAME = 'images'
 
@@ -13,6 +13,6 @@ def save_images(images, image_dir=DIR_NAME):
         response = requests.get(image_url)
         response.raise_for_status()
         url_parse = urlparse(image_url)
-        image_name = os.path.basename(url_parse.path)
+        image_name = unquote(os.path.basename(url_parse.path))
         with open(f'{image_dir}/{image_name}', 'wb') as file:
             file.write(response.content)
